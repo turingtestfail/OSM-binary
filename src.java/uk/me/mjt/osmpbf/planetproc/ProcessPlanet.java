@@ -8,11 +8,13 @@ public class ProcessPlanet {
         //String filename = "/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/planet-150309.osm.pbf";
         String filename = "/home/mtandy/Documents/contraction hierarchies/hertfordshire-latest.osm.pbf";
         
-        NodeReader nr = new NodeReader(filename);
+        //NodeReader nr = new NodeReader(filename);
         
-        storeNodes(nr);
+        //storeNodes(nr);
         //countNodes(nr);
         
+        WayReader wr = new WayReader(filename);
+        countWays(wr);
     }
     
     private void countNodes(NodeReader nr) {
@@ -40,6 +42,19 @@ public class ProcessPlanet {
                 System.out.println("Node and copy unequal?! " + node + " vs " + copy);
             }
         }
+    }
+    
+    private void countWays(WayReader wr) {
+        long count = 0;
+        long maxId = 0;
+
+        for (SimpleWay w : wr) {
+            maxId = Math.max(maxId, w.getWayId());
+            count++;
+        }
+
+        System.out.println("Count: " + count);
+        System.out.println("Max ID: " + maxId);
     }
     
     public static void main(String[] args) {

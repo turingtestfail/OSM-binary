@@ -28,7 +28,7 @@ public class NodeReader extends AbstractReader<SimpleNode> {
         return new NodeReaderIterator();
     }
     
-    class NodeReaderIterator extends ReaderIterator {
+    private class NodeReaderIterator extends ReaderIterator {
         
         @Override
         PbfReader makeReader(File f) {

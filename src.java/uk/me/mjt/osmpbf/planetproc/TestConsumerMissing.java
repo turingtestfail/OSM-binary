@@ -12,6 +12,8 @@ public class TestConsumerMissing {
         NodeReader nr = new NodeReader(filename);
         Iterator<SimpleNode> isn = nr.iterator();
         
+        WayReader wr = new WayReader(filename);
+        Iterator<SimpleWay> isw = wr.iterator();
     }
     
     public static void main(String[] args) {

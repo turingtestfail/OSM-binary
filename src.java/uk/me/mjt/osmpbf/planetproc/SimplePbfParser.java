@@ -83,9 +83,9 @@ public class SimplePbfParser extends BinaryParser {
     }
 
     int getNavigableDirection(Osmformat.Way w) {
-        String oneway = getTagByKey("oneway", w);;
-        String highway = getTagByKey("highway", w);;
-        String junction = getTagByKey("junction", w);;
+        String oneway = getTagByKey("oneway", w);
+        String highway = getTagByKey("highway", w);
+        String junction = getTagByKey("junction", w);
 
         // https://wiki.openstreetmap.org/wiki/OSM_tags_for_routing#Oneway
         if ("no".equals(oneway)) {
