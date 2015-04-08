@@ -18,98 +18,34 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 
-public class NodeReader implements Iterable<SimpleNode> {
-    private final File f;
+public class NodeReader extends AbstractReader<SimpleNode> {
     
     public NodeReader(String fileToRead) {
-        f = new File(fileToRead);
+        super(fileToRead);
     }
     
     public Iterator<SimpleNode> iterator() {
-        return new NodeFileIterator(f);
+        return new NodeReaderIterator();
     }
     
-    private class NodeFileIterator implements Iterator<SimpleNode> {
-        
-        private final NodeFileReader nfr;
-        private Iterator<SimpleNode> currentIterator = null;
-        private final Thread readerThread;
-
-        public NodeFileIterator(File f) {
-            nfr = new NodeFileReader(f);
-            readerThread = new Thread(nfr, "Node Reader thread for " + f);
-            readerThread.start();
-        }
-        
-        public boolean hasNext() {
-            if (currentIterator != null && currentIterator.hasNext()) {
-                return true;
-            } else {
-                try {
-                    while (!nfr.isDone()) {
-                        Collection<SimpleNode> nodeSet = nfr.getSimpleNodeQueue().poll(10, TimeUnit.MILLISECONDS);
-                        if (nodeSet != null) {
-                            currentIterator = nodeSet.iterator();
-                            if (currentIterator.hasNext()) {
-                                return true;
-                            }
-                        }
-                    }
-                    return false;
-                } catch (InterruptedException e) {
-                    return false;
-                }
-            }
-        }
-
-        public SimpleNode next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            } else {
-                return currentIterator.next();
-            }
-        }
-
-        public void remove() {
-            throw new UnsupportedOperationException("This is read-only, sorry.");
-        }
+    class NodeReaderIterator extends ReaderIterator {
         
         @Override
-        protected void finalize() throws Throwable {
-            nfr.setConsumerGone();
-            readerThread.interrupt();
-            super.finalize();
+        PbfReader makeReader(File f) {
+            return new NodeFileReader(f);
         }
         
     }
     
-    private class NodeFileReader extends SimplePbfParser implements Runnable {
+    private class NodeFileReader extends PbfReader {
         
-        private final File f;
-        private final int queueCapacity = 64;
-        private final ArrayBlockingQueue<Collection<SimpleNode>> simpleNodeQueue = new ArrayBlockingQueue(queueCapacity);
-        private volatile boolean fileCompleted = false;
-        private volatile boolean consumerGone = false;
         private long nodesReadSoFar = 0;
         private long startTime = -1;
 
         public NodeFileReader(File f) {
-            this.f = f;
+            super(f);
         }
         
-        public void run() {
-            try {
-                System.out.println("Reading nodes from " + f);
-                InputStream input = new BufferedInputStream(new FileInputStream(f));
-                new BlockInputStream(input, this).process();
-                System.out.println("...file read completed!");
-            } catch (ConsumerGoneRuntimeException e) {
-                System.out.println("...Stopped reading file, as consumer gone.");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
         @Override
         protected void parseDense(Osmformat.DenseNodes nodes) {
             if (startTime == -1) startTime = System.currentTimeMillis();
@@ -134,7 +70,7 @@ public class NodeReader implements Iterable<SimpleNode> {
                     System.out.println("Read " + nodesReadSoFar + " nodes in " + procTime + "ms, " + nodesPerSecond + " per second");
                 }
             }
-            offerNodes(out);
+            offer(out);
         }
 
         @Override
@@ -154,52 +90,8 @@ public class NodeReader implements Iterable<SimpleNode> {
                     System.out.println("Read " + nodesReadSoFar + " nodes in " + procTime + "ms, " + nodesPerSecond + " per second");
                 }
             }
-            offerNodes(out);
+            offer(out);
         }
-        
-        private void offerNodes(Collection<SimpleNode> out) {
-            try {
-                boolean putSuccessful = false;
-                while (!putSuccessful) {
-                    putSuccessful = simpleNodeQueue.offer(out, 1, TimeUnit.MINUTES);
-                    if (!putSuccessful) {
-                        System.gc(); // In case queue's stalled because our consumer is out of scope and needs GC to finalise it.
-                    }
-                }
-                if (consumerGone) throw new ConsumerGoneRuntimeException();
-                simpleNodeQueue.put(out);
-            } catch (InterruptedException e) {
-                if (consumerGone) {
-                    throw new ConsumerGoneRuntimeException();
-                } else {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-        
-        public ArrayBlockingQueue<Collection<SimpleNode>> getSimpleNodeQueue() {
-            return simpleNodeQueue;
-        }
-        
-        @Override
-        public void complete() {
-            System.out.println("Read completed.");
-            long procTime = System.currentTimeMillis()-startTime;
-            double nodesPerSecond = (1000.0 * nodesReadSoFar) / procTime;
-            System.out.println("Read " + nodesReadSoFar + " nodes in " + procTime + "ms, " + nodesPerSecond + " per second");
-            fileCompleted = true;
-        }
-        
-        public boolean isDone() {
-            return (fileCompleted && simpleNodeQueue.isEmpty());
-        }
-
-        public void setConsumerGone() {
-            this.consumerGone = true;
-        }
-        
     }
-    
-    private class ConsumerGoneRuntimeException extends RuntimeException {}
 
 }
