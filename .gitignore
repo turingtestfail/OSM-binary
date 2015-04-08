@@ -9,3 +9,4 @@ src/*.pb.o
 src/libosmpbf.a
 *.swp
 obj-x86_64-linux-gnu
+hs_err_pid*
