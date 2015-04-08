@@ -37,7 +37,19 @@ public class SimpleNode {
             throw new IllegalArgumentException("Count flag may not be 0.");
         this.countflag = countflag;
     }
-
+    
+    public void incrementWayCount() {
+        int wayCount = (countflag & 0x0E) >>1; // 3 bits
+        if (wayCount < 7) {
+            wayCount++;
+            countflag = (byte) ((countflag & ~0x0E) | (wayCount<<1));
+        }
+    }
+    
+    public int getWayCount() {
+        return (countflag & 0x0E) >>1;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 7;
@@ -63,7 +75,8 @@ public class SimpleNode {
     @Override
     public String toString() {
         return "SimpleNode{" + "id=" + id + ", latMillionths=" + latMillionths 
-                + ", lonMillionths=" + lonMillionths + ", countflag=" + countflag + '}';
+                + ", lonMillionths=" + lonMillionths + ", countflag=" + countflag
+                 + ", waycount=" + getWayCount() + '}';
     }
     
 }

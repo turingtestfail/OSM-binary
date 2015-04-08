@@ -118,7 +118,6 @@ public abstract class AbstractReader<E> implements Iterable<E> {
                     }
                 }
                 if (consumerGone) throw new ConsumerGoneRuntimeException();
-                queue.put(out);
             } catch (InterruptedException e) {
                 if (consumerGone) {
                     throw new ConsumerGoneRuntimeException();
