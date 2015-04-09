@@ -26,6 +26,13 @@ public class SimpleNode {
         return lonMillionths;
     }
     
+    double getLat() {
+        return latMillionths/1000000.0;
+    }
+    
+    double getLon() {
+        return lonMillionths/1000000.0;
+    }
     
 
     public byte getCountflag() {
@@ -48,6 +55,14 @@ public class SimpleNode {
     
     public int getWayCount() {
         return (countflag & 0x0E) >>1;
+    }
+    
+    public void setWritten(boolean written) {
+        countflag = (byte) ((countflag & ~0x10) | (written?0x10:0x00));
+    }
+    
+    public boolean isWritten() {
+        return (countflag & 0x10) != 0;
     }
     
     @Override

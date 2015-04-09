@@ -97,7 +97,7 @@ public abstract class AbstractReader<E> implements Iterable<E> {
         
         public void run() {
             try {
-                System.out.println("Reading nodes from " + f);
+                System.out.println("Reading data from " + f);
                 InputStream input = new BufferedInputStream(new FileInputStream(f));
                 new BlockInputStream(input, this).process();
                 System.out.println("...file read completed!");
