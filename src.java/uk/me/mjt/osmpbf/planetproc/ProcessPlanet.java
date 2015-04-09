@@ -1,6 +1,7 @@
 
 package uk.me.mjt.osmpbf.planetproc;
 
+import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.util.TreeMap;
 
 public class ProcessPlanet {
     public static final long UNCONTRACTED = Long.MAX_VALUE;
+    public static final int OUTPUT_BUFFER_SIZE = 32 * 1024;
     
     //String filename = "/home/mtandy/Documents/contraction hierarchies/hertfordshire-latest.osm.pbf";
     String filename ="/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/planet-150309.osm.pbf";
@@ -26,8 +28,8 @@ public class ProcessPlanet {
     public void doIt() throws IOException {
         nodesWithCounts = waysPerNode();
         
-        waysOutput = new DataOutputStream(new FileOutputStream(outFilePrefix+"-ways.dat"));
-        nodesOutput = new DataOutputStream(new FileOutputStream(outFilePrefix+"-nodes.dat"));
+        waysOutput = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outFilePrefix+"-ways.dat"),OUTPUT_BUFFER_SIZE));
+        nodesOutput = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outFilePrefix+"-nodes.dat"),OUTPUT_BUFFER_SIZE));
         extractRoadSegmentsAndNodes();
         waysOutput.close();
         nodesOutput.close();

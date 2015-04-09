@@ -2,20 +2,10 @@
 package uk.me.mjt.osmpbf.planetproc;
 
 import crosby.binary.Osmformat;
-import crosby.binary.file.BlockInputStream;
-import crosby.binary.file.BlockReaderAdapter;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 
 public class NodeReader extends AbstractReader<SimpleNode> {
