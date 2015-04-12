@@ -14,8 +14,12 @@ public class ProcessPlanet {
     public static final int OUTPUT_BUFFER_SIZE = 32 * 1024;
     
     //String filename = "/home/mtandy/Documents/contraction hierarchies/hertfordshire-latest.osm.pbf";
-    String filename ="/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/planet-150309.osm.pbf";
-    String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/planet";
+    //String filename ="/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/planet-150309.osm.pbf";
+    String filename ="/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/great-britain-150409.osm.pbf";
+    //String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/hertfordshire";
+    //String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/planet";
+    //String outFilePrefix = "/tmp/osm-bin-planet";
+    String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/great-britain";
     
     BigNodeStore nodesWithCounts = null;
     DataOutputStream waysOutput = null;
@@ -41,7 +45,7 @@ public class ProcessPlanet {
     private BigNodeStore waysPerNode() {
         NodeReader nr = new NodeReader(filename);
         
-        BigNodeStore bns = new BigNodeStore(3400000000L);
+        BigNodeStore bns = new BigNodeStore(3450000000L);
         for (SimpleNode node : nr) {
             bns.put(node);
         }
@@ -61,27 +65,6 @@ public class ProcessPlanet {
             }
         }
         
-        /*TreeMap<Integer,Integer> distribution = new TreeMap();
-        TreeMap<Integer,Long> example = new TreeMap();
-        
-        for (SimpleNode node : nr) {
-            SimpleNode readback = bns.get(node.getId());
-            int wayCount = readback.getWayCount();
-            if (distribution.containsKey(wayCount)) {
-                distribution.put(wayCount, distribution.get(wayCount)+1);
-            } else {
-                distribution.put(wayCount, 1);
-                example.put(wayCount, readback.getId());
-            }
-            if (wayCount>=6) {
-                System.out.println("https://www.openstreetmap.org/node/" + readback.getId() + " has lots of ways!");
-            }
-            //System.out.println("Node: " + readback.getId() + " ways: " + readback.getWayCount());
-        }
-        
-        System.out.println(distribution);
-        System.out.println(example);*/
-        
         return bns;
     }
     
@@ -95,6 +78,7 @@ public class ProcessPlanet {
             if (w.isNavigable()) {
                 List<Long> nodeIds = w.getNodeIds();
                 for (int i=0 ; i<nodeIds.size()-1 ; i++) {
+                    boolean lastNode = (i==nodeIds.size()-2);
                     
                     SimpleNode from = nodesWithCounts.get(nodeIds.get(i));
                     SimpleNode to = nodesWithCounts.get(nodeIds.get(i+1));
@@ -106,7 +90,7 @@ public class ProcessPlanet {
                         processNode(from);
                     }
                     
-                    if (to.getWayCount() == 2) {
+                    if (to.getWayCount() == 2 && !lastNode) {
                         // Just a waypoint - not at the start or end of a way.
                     } else {
                         if (w.isNavigableForwards())
@@ -149,7 +133,7 @@ public class ProcessPlanet {
                 nodesOutput.writeLong(UNCONTRACTED);
                 nodesOutput.writeBoolean(false);
                 nodesOutput.writeDouble(nodeInWay.getLat());
-                nodesOutput.writeDouble(nodeInWay.getLat());
+                nodesOutput.writeDouble(nodeInWay.getLon());
                 
                 nodeInWay.setWritten(true);
                 nodesWithCounts.put(nodeInWay);

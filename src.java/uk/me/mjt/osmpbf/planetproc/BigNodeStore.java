@@ -44,7 +44,7 @@ public class BigNodeStore {
     
     public void put(SimpleNode node) {
         if (node.getId()<0 || node.getId() > maxIndex) 
-            throw new IllegalArgumentException("Index out of range?");
+            throw new IllegalArgumentException("Index out of range? Asked to put " + node.getId());
         
         long startOffset = indexToOffset(node.getId());
         unsafe.putInt(startOffset, node.getLatMillionths());

@@ -11,7 +11,6 @@ import java.io.IOException;
  * (for my OS and SSD) there's not much benefit to going above 32kb. See
  * https://docs.google.com/spreadsheets/d/1RlisyiFGYeQpJzBkTEq53huecXbUwXnVj_WsfFDuSvo/edit?usp=sharing
  * for graphs.
- * @author mtandy
  */
 public class TestWriteSpeed {
     public static final long UNCONTRACTED = Long.MAX_VALUE;
