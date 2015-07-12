@@ -114,8 +114,11 @@ public class ProcessPlanet {
             waysOutput.writeLong(wayId++);
             waysOutput.writeLong(from);
             waysOutput.writeLong(to);
-            waysOutput.writeLong(segmentLengthMm);
+            //waysOutput.writeLong(segmentLengthMm);
+            int driveTimeMs = Math.round(segmentLengthMm/13.411f); // 30mph
+            waysOutput.writeInt(driveTimeMs);
             // Contraction details (spoiler: It's uncontracted)
+            // This is so we can use the same file format for contracted and uncontracted maps.
             waysOutput.writeBoolean(false);
             waysOutput.writeLong(0);
             waysOutput.writeLong(0);

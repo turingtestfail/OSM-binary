@@ -78,7 +78,7 @@ public class SimpleWay {
     private int getNavigableDirection() {
         // https://wiki.openstreetmap.org/wiki/OSM_tags_for_routing#Oneway
         if ("no".equals(oneway)) {
-            return 1;
+            return 0;
         } else if ("yes".equals(oneway) || "true".equals(oneway) || "1".equals(oneway)
                 || "roundabout".equals(junction) || "motorway".equals(highway)
                 || "motorway_link".equals(highway)) {
