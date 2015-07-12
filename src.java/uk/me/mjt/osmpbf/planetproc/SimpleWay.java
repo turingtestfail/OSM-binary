@@ -18,15 +18,14 @@ public class SimpleWay {
     private static final Set<String> NAVIGABLE_HIGHWAY_TYPES = new HashSet<String>() {{
         add("motorway");
         add("motorway_link");
-        add("trunk");
+        add("trunk"); // Euston rd - green on OSM
         add("trunk_link");
-        add("primary");
+        add("primary"); // Grays inn rd - red on OSM
         add("primary_link");
-        add("secondary");
+        add("secondary"); // Judd st - orange on OSM
         add("secondary_link");
-        add("tertiary");
+        add("tertiary"); // Cartwright gardens - yellow on OSM
         add("tertiary_link");
-        add("tertiary");
         add("living_street");
         add("residential");
         add("unclassified");
@@ -35,7 +34,7 @@ public class SimpleWay {
         add("services");
         add("access");
     }};
-
+    
     public SimpleWay(long wayId, List<Long> nodeIds, String oneway, String highway, String junction) {
         this.wayId = wayId;
         this.nodeIds = nodeIds;
@@ -67,7 +66,7 @@ public class SimpleWay {
     public boolean isNavigable() {
         return (highway != null && NAVIGABLE_HIGHWAY_TYPES.contains(highway));
     }
-
+    
     public boolean isNavigableForwards() {
         return isNavigable() && (getNavigableDirection() >= 0);
     }
