@@ -31,7 +31,7 @@ public class SimpleWay {
         add("unclassified");
         add("service");
         add("road");
-        add("services");
+        //add("services"); This actually seems to be for land use - e.g. https://www.openstreetmap.org/node/767141508
         add("access");
     }};
     
