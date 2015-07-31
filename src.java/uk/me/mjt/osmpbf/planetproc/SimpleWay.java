@@ -13,6 +13,8 @@ public class SimpleWay {
     private final String oneway;
     private final String highway;
     private final String junction;
+    private final String access;
+    private final String motorVehicle;
     
     // See http://wiki.openstreetmap.org/wiki/Key:highway
     private static final Set<String> NAVIGABLE_HIGHWAY_TYPES = new HashSet<String>() {{
@@ -35,12 +37,26 @@ public class SimpleWay {
         add("access");
     }};
     
-    public SimpleWay(long wayId, List<Long> nodeIds, String oneway, String highway, String junction) {
+    private static final Set<String> ACCESS_ONLY_ACCESS_KEYS = new HashSet<String>() {{
+        add("private");
+        add("customers");
+        add("destination");
+        add("delivery");
+    }};
+    
+    private static final Set<String> ACCESS_ONLY_MOTOR_VEHICLE_KEYS = new HashSet<String>() {{
+        add("destination");
+        add("private");
+    }};
+    
+    public SimpleWay(long wayId, List<Long> nodeIds, String oneway, String highway, String junction, String access, String motorVehicle) {
         this.wayId = wayId;
         this.nodeIds = nodeIds;
         this.oneway = oneway;
         this.highway = highway;
         this.junction = junction;
+        this.access = access;
+        this.motorVehicle = motorVehicle;
     }
 
     public long getWayId() {
@@ -88,6 +104,10 @@ public class SimpleWay {
         } else {
             return 0;
         }
+    }
+    
+    public boolean isAccessOnly() {
+        return ACCESS_ONLY_ACCESS_KEYS.contains(access) || ACCESS_ONLY_MOTOR_VEHICLE_KEYS.contains(motorVehicle);
     }
     
 }

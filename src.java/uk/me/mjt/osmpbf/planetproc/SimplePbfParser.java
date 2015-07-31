@@ -35,7 +35,7 @@ public abstract class SimplePbfParser extends BinaryParser {
         return Collections.unmodifiableList(output);
     }
     
-    String getTagByKey(String key, Osmformat.Way w) {
+    public String getTagByKey(String key, Osmformat.Way w) {
         for (int i = 0; i < w.getKeysCount(); i++) {
             if (key.equals(getStringById(w.getKeys(i)))) {
                 return getStringById(w.getVals(i));

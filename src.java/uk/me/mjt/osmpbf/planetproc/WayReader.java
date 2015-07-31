@@ -46,8 +46,10 @@ public class WayReader extends AbstractReader<SimpleWay> {
                 String oneway = getTagByKey("oneway", w);
                 String highway = getTagByKey("highway", w);
                 String junction = getTagByKey("junction", w);
+                String access = getTagByKey("access", w);
+                String motorVehicle = getTagByKey("motor_vehicle", w);
                 
-                out.add(new SimpleWay(wayId, nodeIds, oneway, highway, junction));
+                out.add(new SimpleWay(wayId, nodeIds, oneway, highway, junction, access, motorVehicle));
                 
                 readSoFar++;
                 if (readSoFar % 5000000L == 0 || readSoFar <= 10) {

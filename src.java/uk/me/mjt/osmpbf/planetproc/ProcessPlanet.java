@@ -94,9 +94,9 @@ public class ProcessPlanet {
                         // Just a waypoint - not at the start or end of a way.
                     } else {
                         if (w.isNavigableForwards())
-                            processRoadSegment(firstNodeId, to.getId(), segmentLength);
+                            processRoadSegment(firstNodeId, to.getId(), segmentLength, w.isAccessOnly());
                         if (w.isNavigableBackwards())
-                            processRoadSegment(to.getId(), firstNodeId, segmentLength);
+                            processRoadSegment(to.getId(), firstNodeId, segmentLength, w.isAccessOnly());
                         
                         processNode(to);
                         segmentLength=0;
@@ -108,7 +108,7 @@ public class ProcessPlanet {
         }
     }
     
-    private void processRoadSegment(long from, long to, long segmentLengthMm) {
+    private void processRoadSegment(long from, long to, long segmentLengthMm, boolean isAccessOnly) {
         try {
             directedRoadSegmentCount++;
             waysOutput.writeLong(wayId++);
@@ -119,7 +119,10 @@ public class ProcessPlanet {
             waysOutput.writeInt(driveTimeMs);
             // Contraction details (spoiler: It's uncontracted)
             // This is so we can use the same file format for contracted and uncontracted maps.
-            waysOutput.writeBoolean(false);
+            boolean isContracted = false;
+            int properties = (isContracted?0x01:0x00) | (isAccessOnly?0x02:0x00);
+            waysOutput.writeByte(properties);
+            
             waysOutput.writeLong(0);
             waysOutput.writeLong(0);
         } catch (IOException e) {
