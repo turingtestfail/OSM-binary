@@ -15,6 +15,7 @@ public class SimpleWay {
     private final String junction;
     private final String access;
     private final String motorVehicle;
+    private final String service;
     
     // See http://wiki.openstreetmap.org/wiki/Key:highway
     private static final Set<String> NAVIGABLE_HIGHWAY_TYPES = new HashSet<String>() {{
@@ -37,19 +38,15 @@ public class SimpleWay {
         add("access");
     }};
     
-    private static final Set<String> ACCESS_ONLY_ACCESS_KEYS = new HashSet<String>() {{
+    private static final Set<String> ACCESS_ONLY_KEYS = new HashSet<String>() {{
         add("private");
         add("customers");
         add("destination");
         add("delivery");
     }};
     
-    private static final Set<String> ACCESS_ONLY_MOTOR_VEHICLE_KEYS = new HashSet<String>() {{
-        add("destination");
-        add("private");
-    }};
     
-    public SimpleWay(long wayId, List<Long> nodeIds, String oneway, String highway, String junction, String access, String motorVehicle) {
+    public SimpleWay(long wayId, List<Long> nodeIds, String oneway, String highway, String junction, String access, String motorVehicle, String service) {
         this.wayId = wayId;
         this.nodeIds = nodeIds;
         this.oneway = oneway;
@@ -57,6 +54,7 @@ public class SimpleWay {
         this.junction = junction;
         this.access = access;
         this.motorVehicle = motorVehicle;
+        this.service = service;
     }
 
     public long getWayId() {
@@ -80,7 +78,10 @@ public class SimpleWay {
     }
     
     public boolean isNavigable() {
-        return (highway != null && NAVIGABLE_HIGHWAY_TYPES.contains(highway));
+        return (highway != null 
+                && NAVIGABLE_HIGHWAY_TYPES.contains(highway) 
+                && !"no".equals(motorVehicle) // e.g. https://www.openstreetmap.org/way/138604335
+                && !"no".equals(access));
     }
     
     public boolean isNavigableForwards() {
@@ -107,7 +108,8 @@ public class SimpleWay {
     }
     
     public boolean isAccessOnly() {
-        return ACCESS_ONLY_ACCESS_KEYS.contains(access) || ACCESS_ONLY_MOTOR_VEHICLE_KEYS.contains(motorVehicle);
+        return ACCESS_ONLY_KEYS.contains(access) || ACCESS_ONLY_KEYS.contains(motorVehicle)
+                || "parking_aisle".equals(service);
     }
     
 }
