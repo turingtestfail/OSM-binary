@@ -16,6 +16,7 @@ public class SimpleWay {
     private final String access;
     private final String motorVehicle;
     private final String service;
+    private final String area;
     
     // See http://wiki.openstreetmap.org/wiki/Key:highway
     private static final Set<String> NAVIGABLE_HIGHWAY_TYPES = new HashSet<String>() {{
@@ -46,7 +47,7 @@ public class SimpleWay {
     }};
     
     
-    public SimpleWay(long wayId, List<Long> nodeIds, String oneway, String highway, String junction, String access, String motorVehicle, String service) {
+    public SimpleWay(long wayId, List<Long> nodeIds, String oneway, String highway, String junction, String access, String motorVehicle, String service, String area) {
         this.wayId = wayId;
         this.nodeIds = nodeIds;
         this.oneway = oneway;
@@ -55,6 +56,7 @@ public class SimpleWay {
         this.access = access;
         this.motorVehicle = motorVehicle;
         this.service = service;
+        this.area = area;
     }
 
     public long getWayId() {
@@ -81,7 +83,8 @@ public class SimpleWay {
         return (highway != null 
                 && NAVIGABLE_HIGHWAY_TYPES.contains(highway) 
                 && !"no".equals(motorVehicle) // e.g. https://www.openstreetmap.org/way/138604335
-                && !"no".equals(access));
+                && !"no".equals(access)
+                && !"yes".equals(area)); // e.g. https://www.openstreetmap.org/way/191384955 https://www.openstreetmap.org/way/174858247
     }
     
     public boolean isNavigableForwards() {

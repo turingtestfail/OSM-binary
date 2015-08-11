@@ -8,10 +8,11 @@ public class SimpleNode {
     private final int lonMillionths;
     private byte countflag = 1;
     
-    public SimpleNode(long id, int latMillionths,int lonMillionths) {
+    public SimpleNode(long id, int latMillionths,int lonMillionths, boolean barrier) {
         this.id = id;
         this.latMillionths = latMillionths;
         this.lonMillionths = lonMillionths;
+        if (barrier) countflag |= 0x20;
     }
 
     public long getId() {
@@ -63,6 +64,10 @@ public class SimpleNode {
     
     public boolean isWritten() {
         return (countflag & 0x10) != 0;
+    }
+    
+    public boolean isBarrier() {
+        return (countflag & 0x20) != 0;
     }
     
     @Override

@@ -36,7 +36,7 @@ public class BigNodeStore {
         if (flag == 0) {
             return null;
         } else {
-            SimpleNode sn = new SimpleNode(index, latMillionths, lonMillionths);
+            SimpleNode sn = new SimpleNode(index, latMillionths, lonMillionths, false);
             sn.setCountflag(flag);
             return sn;
         }

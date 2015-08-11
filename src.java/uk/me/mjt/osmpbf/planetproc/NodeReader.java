@@ -42,6 +42,7 @@ public class NodeReader extends AbstractReader<SimpleNode> {
             long lastId = 0;
             long lastLat = 0;
             long lastLon = 0;
+            int keyValIdx = 0;
             
             ArrayList<SimpleNode> out = new ArrayList(nodes.getIdCount());
             for (int i = 0; i < nodes.getIdCount(); i++) {
@@ -50,7 +51,26 @@ public class NodeReader extends AbstractReader<SimpleNode> {
                 lastLon += nodes.getLon(i);
                 int latMillionths = (int)Math.round(1000000*parseLat(lastLat));
                 int lonMillionths = (int)Math.round(1000000*parseLon(lastLon));
-                SimpleNode sn = new SimpleNode(lastId, latMillionths, lonMillionths);
+                
+                boolean barrier=false;
+                
+                if (nodes.getKeysValsCount() > 0) {
+                
+                    while (nodes.getKeysVals(keyValIdx) != 0) {
+                        int keyId = nodes.getKeysVals(keyValIdx++);
+                        int valueId = nodes.getKeysVals(keyValIdx++);
+                        String key = getStringById(keyId);
+                        String value = getStringById(valueId);
+                        if (key.equals("barrier") && (value.equals("gate") || value.equals("bollard") || value.equals("lift_gate"))) {
+                            barrier=true;
+                        }
+                    }
+                    keyValIdx++; // Zero delimiter
+
+                }
+                
+                
+                SimpleNode sn = new SimpleNode(lastId, latMillionths, lonMillionths, barrier);
                 out.add(sn);
                 
                 nodesReadSoFar++;
@@ -65,12 +85,13 @@ public class NodeReader extends AbstractReader<SimpleNode> {
 
         @Override
         protected void parseNodes(List<Osmformat.Node> nodes) {
+            if (!nodes.isEmpty()) System.out.println("Non-dense nodes seen!");
             if (startTime == -1) startTime = System.currentTimeMillis();
             ArrayList<SimpleNode> out = new ArrayList(nodes.size());
             for (Osmformat.Node n : nodes) {
                 int latMillionths = (int)Math.round(1000000*parseLat(n.getLat()));
                 int lonMillionths = (int)Math.round(1000000*parseLon(n.getLon()));
-                SimpleNode sn = new SimpleNode(n.getId(), latMillionths, lonMillionths);
+                SimpleNode sn = new SimpleNode(n.getId(), latMillionths, lonMillionths, false /*fixme*/);
                 out.add(sn);
                 
                 nodesReadSoFar++;

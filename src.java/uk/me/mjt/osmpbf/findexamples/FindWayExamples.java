@@ -2,17 +2,14 @@
 package uk.me.mjt.osmpbf.findexamples;
 
 import crosby.binary.Osmformat;
-import crosby.binary.Osmformat.DenseNodes;
 import crosby.binary.file.BlockInputStream;
 import crosby.binary.file.BlockReaderAdapter;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 import uk.me.mjt.osmpbf.planetproc.SimplePbfParser;
-import uk.me.mjt.osmpbf.planetproc.SimpleWay;
 
 
 public class FindWayExamples extends SimplePbfParser {

@@ -83,6 +83,7 @@ public class ProcessPlanet {
                     SimpleNode from = nodesWithCounts.get(nodeIds.get(i));
                     SimpleNode to = nodesWithCounts.get(nodeIds.get(i+1));
                     
+                    boolean barrier = to.isBarrier();
                     segmentLength += haversineMillimeters(from,to);
                     
                     if (firstNodeId == -1) {
@@ -90,7 +91,7 @@ public class ProcessPlanet {
                         processNode(from);
                     }
                     
-                    if (to.getWayCount() == 2 && !lastNode) {
+                    if (to.getWayCount() == 2 && !lastNode && !barrier) {
                         // Just a waypoint - not at the start or end of a way.
                     } else {
                         if (w.isNavigableForwards())
@@ -137,7 +138,10 @@ public class ProcessPlanet {
                 nodeCount++;
                 nodesOutput.writeLong(nodeInWay.getId());
                 nodesOutput.writeLong(UNCONTRACTED);
-                nodesOutput.writeBoolean(false);
+                boolean isBorderNode = false;
+                boolean isBarrier = nodeInWay.isBarrier();
+                int properties = (isBorderNode?0x01:0x00) | (isBarrier?0x02:0x00);
+                nodesOutput.writeByte(properties);
                 nodesOutput.writeDouble(nodeInWay.getLat());
                 nodesOutput.writeDouble(nodeInWay.getLon());
                 
