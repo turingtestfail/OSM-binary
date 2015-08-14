@@ -44,4 +44,13 @@ public abstract class SimplePbfParser extends BinaryParser {
         return null;
     }
     
+    public String getTagByKey(String key, Osmformat.Relation r) {
+        for (int i = 0; i < r.getKeysCount(); i++) {
+            if (key.equals(getStringById(r.getKeys(i)))) {
+                return getStringById(r.getVals(i));
+            }
+        }
+        return null;
+    }
+    
 }
