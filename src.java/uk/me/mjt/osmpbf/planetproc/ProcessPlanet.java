@@ -221,8 +221,8 @@ public class ProcessPlanet {
     private void writeTurnRestriction(long turnRestrictionId, String restrictionType, List<WrittenRoadSegment> turnRestriction) {
         try {
             turnRestrictionOutput.writeLong(turnRestrictionId);
-            turnRestrictionOutput.writeInt(turnRestriction.size());
             turnRestrictionOutput.writeBoolean(restrictionType.startsWith("no_"));
+            turnRestrictionOutput.writeInt(turnRestriction.size());
             for (WrittenRoadSegment segment : turnRestriction) {
                 turnRestrictionOutput.writeLong(segment.graphEdgeId);
             }
