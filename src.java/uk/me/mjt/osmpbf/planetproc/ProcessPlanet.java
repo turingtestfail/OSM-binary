@@ -12,15 +12,18 @@ public class ProcessPlanet {
     public static final long UNCONTRACTED = Long.MAX_VALUE;
     public static final int OUTPUT_BUFFER_SIZE = 32 * 1024;
     
-    //String filename = "/home/mtandy/Documents/contraction hierarchies/hertfordshire-latest.osm.pbf";
+    //String filename = "/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/hertfordshire-150901.osm.pbf";
     //String filename ="/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/planet-150309.osm.pbf";
     //String filename = "/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/greater-london-150813.osm.pbf";
-    String filename ="/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/great-britain-150409.osm.pbf";
+    String filename ="/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/great-britain-150831.osm.pbf";
+    //String filename ="/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/cambridge_england-150901.osm.pbf";
+    
     //String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/hertfordshire";
     //String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/planet";
     //String outFilePrefix = "/tmp/osm-bin-planet";
     //String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/greater-london";
     String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/great-britain";
+    //String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/cambridge";
     
     //HashSet<Long> turnRestrictionRelatedNodes = new HashSet();
     HashSet<Long> turnRestrictionRelatedWayIds = new HashSet();
@@ -70,7 +73,7 @@ public class ProcessPlanet {
     private BigNodeStore waysPerNode() {
         NodeReader nr = new NodeReader(filename);
         
-        BigNodeStore bns = new BigNodeStore(3700000000L);
+        BigNodeStore bns = new BigNodeStore(3800000000L);
         for (SimpleNode node : nr) {
             bns.put(node);
         }
@@ -208,6 +211,9 @@ public class ProcessPlanet {
         TurnRestrictionReader trr = new TurnRestrictionReader(filename);
         for (SimpleTurnRestriction tr : trr) {
             try {
+                if (tr.turnRestrictionId==5461729L) {
+                    System.out.println("asdf " + tr);
+                }
                 List<WrittenRoadSegment> turnRestriction = turnRestrictionToGraphEdges(tr);
                 writeTurnRestriction(tr.turnRestrictionId, tr.restrictionType, turnRestriction);
                 System.out.println("Success for " + tr.turnRestrictionId);
@@ -259,7 +265,14 @@ public class ProcessPlanet {
         List<WrittenRoadSegment> result = new ArrayList();
         
         if (viaWays.isEmpty()) {
-            long sharedNodeId = getSharedNodeIdIfExactlyOne(fromWay, toWay);
+            long sharedNodeId;
+            if (fromWay.id==toWay.id) { // e.g. no u-turn restriction http://www.openstreetmap.org/relation/5461729
+                if (tr.viaNodeIds.size() != 1)
+                    throw new IndecipherableTurnRestrictionException("From and to the same way, but no via node?");
+                sharedNodeId = tr.viaNodeIds.get(0);
+            } else {
+                sharedNodeId = getSharedNodeIdIfExactlyOne(fromWay, toWay);
+            }
             List<WrittenRoadSegment> startCandidates = findStartSegmentCandidates(fromWay, sharedNodeId);
             List<WrittenRoadSegment> endCandidates = findEndSegmentCandidates(toWay, sharedNodeId);
             WrittenRoadSegmentPair wrsp = resolveAmbiguity(startCandidates, endCandidates, tr.restrictionType);
@@ -421,7 +434,7 @@ public class ProcessPlanet {
     private long getSharedNodeIdIfExactlyOne(OsmWay a, OsmWay b) throws IndecipherableTurnRestrictionException {
         Set<Long> shared = getSharedNodeIds(a.simpleWay.getNodeIds(), b.simpleWay.getNodeIds());
         if (shared.size() != 1) {
-            throw new IndecipherableTurnRestrictionException("Ways disconnected, or not in connected order?");
+            throw new IndecipherableTurnRestrictionException("Restriction ways disconnected, or not in connected order?");
         }
         return shared.iterator().next();
     }
