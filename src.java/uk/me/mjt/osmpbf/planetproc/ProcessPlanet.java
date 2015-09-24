@@ -47,12 +47,15 @@ public class ProcessPlanet {
         
         waysOutput = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outFilePrefix+"-ways.dat"),OUTPUT_BUFFER_SIZE));
         nodesOutput = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outFilePrefix+"-nodes.dat"),OUTPUT_BUFFER_SIZE));
+        turnRestrictionOutput = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outFilePrefix+"-turnrestrictions.dat"),OUTPUT_BUFFER_SIZE));
+        
+        writeVersionHeaders();
         extractRoadSegmentsAndNodes();
+        extractReasonableLookingTurnRestrictions();
+        
+        
         waysOutput.close();
         nodesOutput.close();
-        
-        turnRestrictionOutput = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outFilePrefix+"-turnrestrictions.dat"),OUTPUT_BUFFER_SIZE));
-        extractReasonableLookingTurnRestrictions();
         turnRestrictionOutput.close();
         
         System.out.println("Directed road segments written: " + directedRoadSegmentCount);
@@ -94,6 +97,13 @@ public class ProcessPlanet {
         }
         
         return bns;
+    }
+    
+    private void writeVersionHeaders() throws IOException {
+        long FILE_FORMAT_VERSION = 5;
+        waysOutput.writeLong(FILE_FORMAT_VERSION);
+        nodesOutput.writeLong(FILE_FORMAT_VERSION);
+        turnRestrictionOutput.writeLong(FILE_FORMAT_VERSION);
     }
     
     private void extractRoadSegmentsAndNodes() {
@@ -163,6 +173,7 @@ public class ProcessPlanet {
             directedRoadSegmentCount++;
             long graphEdgeId = wayId++;
             waysOutput.writeLong(graphEdgeId);
+            waysOutput.writeLong(graphEdgeId); // For cloned nodes (graph modification for access only, barriers etc)
             waysOutput.writeLong(from);
             waysOutput.writeLong(to);
             //waysOutput.writeLong(segmentLengthMm);
@@ -189,6 +200,7 @@ public class ProcessPlanet {
             if (!nodeInWay.isWritten()) {
                 nodeCount++;
                 nodesOutput.writeLong(nodeInWay.getId());
+                nodesOutput.writeLong(nodeInWay.getId()); // For cloned nodes (graph modification for access only, barriers etc)
                 nodesOutput.writeLong(UNCONTRACTED);
                 boolean isBorderNode = false;
                 boolean isBarrier = nodeInWay.isBarrier();
