@@ -14,15 +14,15 @@ public class ProcessPlanet {
     
     //String filename = "/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/hertfordshire-150901.osm.pbf";
     //String filename ="/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/planet-150309.osm.pbf";
-    //String filename = "/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/greater-london-150813.osm.pbf";
-    String filename ="/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/great-britain-150831.osm.pbf";
+    String filename = "/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/greater-london-160124.osm.pbf";
+    //String filename ="/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/great-britain-150831.osm.pbf";
     //String filename ="/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/cambridge_england-150901.osm.pbf";
     
     //String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/hertfordshire";
     //String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/planet";
     //String outFilePrefix = "/tmp/osm-bin-planet";
-    //String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/greater-london";
-    String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/great-britain";
+    String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/greater-london";
+    //String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/great-britain";
     //String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/cambridge";
     
     //HashSet<Long> turnRestrictionRelatedNodes = new HashSet();
@@ -76,7 +76,7 @@ public class ProcessPlanet {
     private BigNodeStore waysPerNode() {
         NodeReader nr = new NodeReader(filename);
         
-        BigNodeStore bns = new BigNodeStore(3800000000L);
+        BigNodeStore bns = new BigNodeStore(4000000000L);
         for (SimpleNode node : nr) {
             bns.put(node);
         }
@@ -100,10 +100,15 @@ public class ProcessPlanet {
     }
     
     private void writeVersionHeaders() throws IOException {
-        long FILE_FORMAT_VERSION = 5;
+        long FILE_FORMAT_VERSION = 6;
         waysOutput.writeLong(FILE_FORMAT_VERSION);
         nodesOutput.writeLong(FILE_FORMAT_VERSION);
         turnRestrictionOutput.writeLong(FILE_FORMAT_VERSION);
+        
+        long ENTRY_COUNT = -1;
+        waysOutput.writeLong(ENTRY_COUNT);
+        nodesOutput.writeLong(ENTRY_COUNT);
+        turnRestrictionOutput.writeLong(ENTRY_COUNT);
     }
     
     private void extractRoadSegmentsAndNodes() {
