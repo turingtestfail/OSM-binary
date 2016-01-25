@@ -5,7 +5,7 @@ import java.lang.reflect.Field;
 import sun.misc.Unsafe;
 
 
-public class BigNodeStore {
+public class BigNodeStore implements NodeStore {
     
     private static final int SIZE_OF_INT_IN_BYTES = 4;
     private static final int SIZE_OF_BYTE_IN_BYTES = 1; // obv
@@ -24,6 +24,7 @@ public class BigNodeStore {
         System.out.println("Memory allocated and zeroed.");
     }
     
+    @Override
     public SimpleNode get(long index) {
         if (index<0 || index > maxIndex) 
             throw new IllegalArgumentException("Index out of range?");
@@ -42,6 +43,7 @@ public class BigNodeStore {
         }
     }
     
+    @Override
     public void put(SimpleNode node) {
         if (node.getId()<0 || node.getId() > maxIndex) 
             throw new IllegalArgumentException("Index out of range? Asked to put " + node.getId());

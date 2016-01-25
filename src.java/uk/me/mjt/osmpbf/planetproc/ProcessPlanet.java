@@ -14,22 +14,22 @@ public class ProcessPlanet {
     
     //String filename = "/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/hertfordshire-150901.osm.pbf";
     //String filename ="/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/planet-150309.osm.pbf";
-    String filename = "/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/greater-london-160124.osm.pbf";
-    //String filename ="/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/great-britain-150831.osm.pbf";
+    //String filename = "/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/greater-london-160124.osm.pbf";
+    String filename ="/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/great-britain-160124.osm.pbf";
     //String filename ="/home/mtandy/Documents/contraction hierarchies/osm-pbf-files/cambridge_england-150901.osm.pbf";
     
     //String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/hertfordshire";
     //String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/planet";
     //String outFilePrefix = "/tmp/osm-bin-planet";
-    String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/greater-london";
-    //String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/great-britain";
+    //String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/greater-london";
+    String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/great-britain-160124";
     //String outFilePrefix = "/home/mtandy/Documents/contraction hierarchies/binary-test/cambridge";
     
     //HashSet<Long> turnRestrictionRelatedNodes = new HashSet();
     HashSet<Long> turnRestrictionRelatedWayIds = new HashSet();
     HashMap<Long,OsmWay> turnRestrictionRelatedWaysById = new HashMap();
     
-    BigNodeStore nodesWithCounts = null;
+    NodeStore nodesWithCounts = null;
     DataOutputStream waysOutput = null;
     DataOutputStream nodesOutput = null;
     DataOutputStream turnRestrictionOutput = null;
@@ -73,10 +73,10 @@ public class ProcessPlanet {
         }
     }
     
-    private BigNodeStore waysPerNode() {
+    private NodeStore waysPerNode() {
         NodeReader nr = new NodeReader(filename);
         
-        BigNodeStore bns = new BigNodeStore(4000000000L);
+        NodeStore bns = new HashNodeStore();
         for (SimpleNode node : nr) {
             bns.put(node);
         }
